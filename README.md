@@ -1,4 +1,4 @@
-# CTCI
+# Cracking the Coding Interview
 Interview Prep
 
 ### Chapter 1: Arrays and Strings
