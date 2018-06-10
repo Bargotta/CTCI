@@ -9,9 +9,10 @@
  */
 
 import java.util.*;
-import java.io.*;
 
+// n := number of chars in the string
 public class IsUnique {
+	// O(n) time and O(n) space
 	public static boolean isUnique(String s) {
 		HashSet<Character> freq = new HashSet<Character>();
 		for (char c : s.toCharArray()) {
@@ -21,7 +22,7 @@ public class IsUnique {
 		return true;
 	}
 
-	// no extra space
+	// O(n log(n)) and O(1) space
 	public static boolean isUniqueNoDS(String s) {
 		char[] cs = s.toCharArray();
 		Arrays.sort(cs);
