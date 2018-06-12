@@ -20,22 +20,22 @@ The code below implements a very basic singly linked list.
 
 ```java
 class Node {
-	Node next = null;
-	int data;
+    Node next = null;
+    int data;
 
-	public Node(int d) {
-		data = d;
-	}
+    public Node(int d) {
+        data = d;
+    }
 
-	void appendToTail(int d) {
-		Node end = new Node(d);
-		Node n = this;
+    void appendToTail(int d) {
+        Node end = new Node(d);
+        Node n = this;
 
-		while (n.next != null) {
-			n = n.next;
-		}
-		n.next = end;
-	}
+        while (n.next != null) {
+            n = n.next;
+        }
+        n.next = end;
+    }
 }
 ```
 
@@ -46,23 +46,23 @@ Given a node `n`, we find the previous node `prev` and set `prev.next` equal to 
 
 ```java
 public class Node {
-	...
-	Node deleteNode(Node head, int d) {
-		Node n = head;
+    ...
+    Node deleteNode(Node head, int d) {
+        Node n = head;
 
-		if (n.data == d)
-			return head.next; /* moved head */
+        if (n.data == d)
+            return head.next; /* moved head */
 
-		while (n.next != null) {
-			if (n.next.data == d) {
-				n.next = n.next.next;
-				return head; /* head didn't change */
-			}
-			n = n.next;
-		}
-		return head;
-	}
-	...
+        while (n.next != null) {
+            if (n.next.data == d) {
+                n.next = n.next.next;
+                return head; /* head didn't change */
+            }
+            n = n.next;
+        }
+        return head;
+    }
+    ...
 }
 ```
 
@@ -72,6 +72,3 @@ The runner technique means that you iterate through the linked list with two poi
 
 #### Recursive Problems
 Explained in further detail later one. Recursive algorithms take at least `O(n)` space, where `n` is the depth of the recursive call.
-
-
-
