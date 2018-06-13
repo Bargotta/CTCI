@@ -1,6 +1,6 @@
 /**
  * Cracking the Coding Interview Chapter 2: Linked Lists
- * Interview Question: 2.2 Return Kth to Last
+ * Interview Question: 2.3 Delete Middle Node
  * Desc: Implement an algorithm to delete a node in the middle (i.e., any node
  * but the first and last node, not necessarily the exact middle) of a singly
  * linked list, given only access to that node.
