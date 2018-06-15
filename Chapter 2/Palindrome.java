@@ -4,7 +4,7 @@
  * Desc: Implement a function to check if a linked list is a palindrome.
  *
  * Author: Aaron Bargotta
- * Date: 06/13/18
+ * Date: 06/14/18
  *
  * Notes: Several different approaches:
  * 1. O(n) time and O(1) space: 
