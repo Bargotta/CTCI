@@ -9,6 +9,8 @@
  *
  * Author: Aaron Bargotta
  * Date: 06/14/18
+ *
+ * Note: A hashtable could also be used to store the references of each node.
  */
 
 import java.util.*;
