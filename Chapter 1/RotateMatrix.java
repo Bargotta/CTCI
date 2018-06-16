@@ -11,7 +11,7 @@
 
 import java.util.*;
 
-// n := total # of elements in the array
+// n := # of elements in the array
 public class RotateMatrix {
 	// O(n) time and space
 	public static int[][] rotateMatrix(int[][] matrix) {
