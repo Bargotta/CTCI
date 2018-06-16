@@ -99,7 +99,7 @@ public class LoopDetection {
 		tester(10, 6);
 		System.out.println();
 
-		tester(0, 6);
+		tester(1, 6);
 		System.out.println();
 	}
 }
