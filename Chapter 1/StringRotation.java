@@ -29,6 +29,6 @@ public class StringRotation {
 
 	public static void main(String[] args) {
 		tester("waterbottle", "erbottlewat");
-		tester("waterbottle", "erbottlewar");
+		tester("waterbottle", "erbottlewaf");
 	}
 }
