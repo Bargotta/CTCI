@@ -1,2 +1,4 @@
+# ignore java class files
 *.class
+# ignore macOS Finder metadata
 *DS_Store*
