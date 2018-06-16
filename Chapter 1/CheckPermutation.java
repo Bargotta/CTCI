@@ -62,4 +62,4 @@ public class CheckPermutation {
 		System.out.println("checkPermutation2('" + s3 + "','" + s4 + "') = " +
 			checkPermutation2(s3, s4));
 	}
-}
+
