@@ -14,8 +14,6 @@
  * Date: 06/10/18
  */
 
-import java.util.*;
-
 public class URLify {
 	public static String urlify(String s, int len) {
 		char[] cs = s.toCharArray();
