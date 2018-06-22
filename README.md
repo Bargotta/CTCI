@@ -1,5 +1,4 @@
 # Cracking the Coding Interview
-Interview Prep
 
 ## Chapter 1: Arrays and Strings
 
@@ -175,3 +174,223 @@ public class MyQueue<T> {
     }
 }
 ```
+
+## Chapter 4: Trees and Graphs
+Note: For tree and graph algorithms, the worst case and average case times may vary wildy, so we must evaluate both aspects of any algorithm.
+
+### Types of Trees
+* Each tree has a root node.
+* The root node has zero or more child nodes.
+* Each child node has zero or more child nodes, and so on.
+* A node is called a "leaf" node if it has no children.
+
+The tree cannot contain cycles. The nodes may or may not be in a particular order, they could have any data type as values, and they may or may not have links back to their parent nodes.
+
+Tree and graph questions are rife with ambiguous details and incorrect assumptions. Be sure to watch out for the following issues and seek clarification when necessary.
+
+#### Trees vs. Binary Trees
+A binary tree is a tree in which each node has up to two children.
+
+#### Binary Tree vs. Binary Search Tree
+A binary search tree is a binary tree in which every node fits a specific ordering property: `all left descendents <= n < all right descendents`. This must be true for each node `n`.
+
+Note: The definition of a binary search tree can vary slightly with respect to equality.
+
+#### Balanced vs. Unbalanced
+Note that balancing a tree does not mean that the left and right subtree are exactly the same size (which would be a "perfect binary tree").
+
+One way to think about it is that a "balanced" tree really means something more like "not terribly imbalanced". It's balanced enough to ensure `O(log n)` times for `insert` and `find`, but it's not necessarily as balanced as it could be.
+
+Two common types of balanced trees are red-black trees and AVL trees (discussed in the Advanced Topics section).
+
+#### Complete Binary Trees
+A complete binary tree is a binary tree in which every level of the tree is fully filled, except for perhaps the last level. To the extend that the last level is filled, it is filled left to right.
+
+#### Full Binary Trees
+A full binary tree is a binary tree in which every node has either zero or two children. That is, no nodes have only one child.
+
+#### Perfect Binary Trees
+A perfect binary tree is one where all leaf nodes are at the same level, and this level has the maximum number of nodes. Therefore, a perfect binary tree is both full and complete (Note that a full and complete binary tree is not necessarily a perfect binary tree).
+
+A perfect tree must have exactly `2^k - 1` nodes (where `k` is the number of levels).
+
+### Binary Tree Traversal
+The most common tree traversal is in-order.
+
+#### In-Order Traversal
+In-order traversal means to "visit" the left branch, then the current node, and finally, the right branch.
+
+```java
+public class TreeTraversal {
+    ...
+    public void inOrderTraversal(TreeNode node) {
+        if (node != null) {
+            inOrderTraversal(node.left);
+            visit(node);
+            inOrderTraversal(node.right);
+        }
+    }
+    ...
+} 
+```
+
+#### Pre-Order Traversal
+Pre-order traversal visits the current node before its child nodes (hence the name "pre-order").
+
+```java
+public class TreeTraversal {
+    ...
+    public void preOrderTraversal(TreeNode node) {
+        if (node != null) {
+            visit(node);
+            inOrderTraversal(node.left);
+            inOrderTraversal(node.right);
+        }
+    }
+    ...
+} 
+```
+
+In a pre-order traversal, the root is always the first node visited.
+
+#### Post-Order Traversal
+Post-order traversal visits the current node after its child nodes (hence the name "post-order").
+
+```java
+public class TreeTraversal {
+    ...
+    public void postOrderTraversal(TreeNode node) {
+        if (node != null) {
+            inOrderTraversal(node.left);
+            inOrderTraversal(node.right);
+            visit(node);
+        }
+    }
+    ...
+} 
+```
+
+In a post-order traversal, the root is always the last node visited.
+
+### Binary Heaps (Min-Heaps and Max-Heaps)
+A min-heap is a complete binary tree where each node is small than its children. The root, therefore, is the minimum element in the tree.
+
+We have two key operations on a min-heap: `insert` and `extract_min`.
+
+*insert*
+
+We start by inserting into the last spot as to maintain the complete tree property.
+
+Then, we "fix" the tree by swapping the new element with its parent, until we find an appropriate spot for the element. We essentially bubble up the minimum element. This takes `O(log n)` time, where `n` is the number of nodes in the heap.
+
+*Extract Minimum Element*
+
+First, we remove the minimum element and swap it with the last element in the heap. Then, we bubble down this element, swapping it with the smaller of its children until the min-heap property is restored. This will also take `O(log n)` time.
+
+### Tries (Prefix Trees)
+A trie is a variant of an n-ary tree in which characters are stored at each node. Each path down the tree may represent a word. Null nodes are often used to indicate complete words.
+
+The actual implementation of these null nodes might be a special type of child, or we could use just a boolean flag `terminates` within the "parent" node.
+
+A node in a trie could have anywhere from `1` through `ALPHABET_SIZE + 1` children (or, `0` through `ALPHABET_SIZE` if a boolean flag is used instead of a null node).
+
+Very commonly, a trie is used to store the entire (English) laguage for quick prefix lookups. While a hash table can quickly look up whether a string is a valid word, it cannot tell us if a string is a prefix of any valid words.
+
+A trie can check if a string is a valid prefix in `O(K)` time, where `K` is the length of the string. This is actually the same runtime as a hash table will take.
+
+Many problems involving lists of valid words leverage a trie as an optimization. In situations when we search through the tree on related prefixes repeatedly, we might pass around a reference to the current node in the tree. This will allow us to just check if `Y` is a child of `MAN`, rather than starting from the root each time.
+
+### Graphs
+A graph is simply a collection of nodes with edges between (some of) them. If there is a path between every pair of vertices, it is called a "connected graph". An "acyclic graph" is one without cycles.
+
+In terms of programming, there are two common ways to represent a graph.
+
+#### Adjacency List
+This is the most common way to represent a graph. Every vertex stores a list of adjacent vertices.
+
+A simple class definition for a graph node could look essentially the same as a tree node.
+
+```java
+public class Graph {
+    public Node[] nodes;
+}
+
+public class Node {
+    public String name;
+    public Node[] children;
+}
+```
+
+An array (or a hash table) of lists (arrays, arraylists, linked lists, etc.) can store the adjacency list.
+
+#### Adjacency Matrices
+An adjaceny matrix is an `NxN` boolean matrix (where `N` is the number of nodes), where a `true` value at `matrix[i][j]` indicates an edge from node `i` to node `j`. In an undirected graph, an adjacency matrix will be symmetric.
+
+Note that adjacency matrices are often less efficient than adjacency lists. In the adjacency list representation, you can easily iterate through the neighbors of a node. In the adjacency matrix representation, you will need to iterate through all the nodes to identify a node's neighbors.
+
+### Graph Search
+The two most common ways to search a graph are depth-first search (DFS) and breadth-first search (BFS).
+
+In DFS, we start at the root (or another arbitrarily selected node) and explore each branch completely before moving on to the next branch.
+
+In BFS, we start at the root (or another arbitrarily selected node) and explore each neighbor before going on to any of their children.
+
+DFS is often preferred if we want to visit every node in the graph. However, if we want to find the shortest path (or just any path) between two nodes, BFS is generally better.
+
+#### Depth-First Search (DFS)
+Note that pre-order and other forms of tree traversal are a form of DFS. The key difference is that when implementing this algorithm, we must check if the node has been visited.
+
+The pseudocode below implements DFS:
+
+```java
+public class DFS {
+    ...
+    public void search(Node root) {
+        if (root == null) return;
+        visit(root);
+        root.visited = true;
+        for (Node n : root.adjacent) {
+            if (! n.visited) {
+                search(n);
+            }
+        }
+    }
+    ...
+}
+```
+
+#### Breadth-First Search (BFS)
+The pseudocode below implements BFS:
+
+```java
+public class BFS {
+    ...
+    public void search(Node root) {
+        Queue queue = new Queue();
+        root.marked = true;
+        queue.enqueue(root);
+
+        while (! queue.isEmpty()) {
+            Node r = queue.dequeue();
+            visit(r);
+            for (Node n : r.adjacent) {
+                if (! n.marked) {
+                    n.marked = true;
+                    queue.enqueue(n);
+                }
+            }
+        }
+    }
+    ...
+}
+```
+
+#### Bidirectional Search
+Bidirectional search is used to find the shortest path between a source and destination node. It operates by essentially running two simultaneous breadth-first searches, one from each node. When their searches collide, we have found a path.
+
+To see why this is faster, consider a graph where every node has at most `k` adjacent nodes and the shortest path from node `s` to node `t` has length `d`.
+
+* In traditional breadth-first search, this would take `O(k^d)` time.
+* In bidirectional search, we have two searches that collide after approximately `d/2` levels. The search from node `s` visits approximately `k^(d/2)`, as does the search from node `t`. That approximately `2k^(d/2)`, or `O(k^(d/2))` nodes total.
+
+The bidirectional search is faster by a factor of `k^(d/2)`! We can support paths that are twice as long.
