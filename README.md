@@ -1,5 +1,12 @@
 # Cracking the Coding Interview
 
+## Table of Contents
+[**Chapter 1: Arrays and Strings**](#chapter-1-arrays-and-strings)  
+[**Chapter 2: Linked Lists**](#chapter-2-linked-lists)  
+[**Chapter 3: Stacks and Queues**](#chapter-3-stacks-and-queues)  
+[**Chapter 4: Trees and Graphs**](#chapter-4-trees-and-graphs)  
+[**Chapter 5: Bit Manipulation**](#chapter-5-bit-manipulation)
+
 ## Chapter 1: Arrays and Strings
 
 #### Hash Tables:
@@ -394,3 +401,97 @@ To see why this is faster, consider a graph where every node has at most `k` adj
 * In bidirectional search, we have two searches that collide after approximately `d/2` levels. The search from node `s` visits approximately `k^(d/2)`, as does the search from node `t`. That approximately `2k^(d/2)`, or `O(k^(d/2))` nodes total.
 
 The bidirectional search is faster by a factor of `k^(d/2)`! We can support paths that are twice as long.
+
+## Chapter 5: Bit Manipulation
+Bit manipulation is sometimes a useful technique to optimize your code.
+
+### Bit Manipulation By Hand
+Some tricks:
+1. `0110 + 0110` is equivalent to `0110 * 2`, which is equivalent to shifting `0110` left by `1`.
+2. `0100` equals `4`, and multiplying by `4` is just left shifting by `2`.
+3. If you XOR a bit with its own negated value, you will always get `1`.
+
+### Bit Facts and Tricks
+We use `1s` and `0s` to indicate a sequence of 1s or 0s, respectively.
+
+```
+x ^ 0s = x          x & 0s = 0          x | 0s = x
+x ^ 1s = ~x         x & 1s = x          x | 1s = 1s
+x ^ x = 0           x & x = x           x | x = x
+```
+
+### Two's Complement and Negative Numbers
+Computers typically store integers in two's complement representation. A positive number is represented as itself while a negative number is represented as the two's complement of its absolute value (with a 1 in its sign bit to indicate that it's a negative value). The two's complement of an N-bit number (where N is the number of bits used for the number, *including* the sign bit) is the complement of the number with respect to `2^(N-1)`.
+
+In other words, the binary representation of `-k` (negative k) as an N-bit number is `concat(1, 2^(N-1) - k)`.
+
+Another way to look at this is that we invert the bits in the positive representation and then add 1. 3 is `011` in binary. Flip the bits to get `100`, add 1 to get `101`, then prepend the sign bit (1) to get `1101`.
+
+For one positive and one negative N-bit integer, `X` and `Y`, observe that if `X + |Y| = 2^(N-1)` then the binary values of `X` and `Y` are identical, other than the sign bit. E.g, `6 := 0110` and `-2 := 1110`.
+
+### Arithmetic vs. Logical Right Shift
+There are two types of right shift operators. The arithmetic right shift essentially divides by two. The logical right shift does what we would visually see as shifting the bits. This is best seen on a negative number.
+
+In a logical right shift, we shift the bits and put a 0 in the most significant bit. It is indicated with a `>>>` operator.
+
+In an arithmetic right shift, we shift values to the right but fill the new bits with the value of the sign bit. It is indicated by a `>>` operator.
+
+### Common Bit Tasks
+The following operations are very important to know.
+
+#### Get Bit
+This method shifts `1` over by `i` bits, creating a value like `00010000`. By performing an AND with `num`, we clear all bits other than the bit at bit `i`.
+
+```
+boolean getBit(int num, int i) {
+    return ((num & (1 << i)) != 0);
+}
+```
+
+#### Set Bit
+This method shifts `1` over by `i` bits, creating a value like `00010000`. By performing an OR witj `num`, only the value at bit `i` will change. All other bits of the mask are zero and will not affect `num`.
+
+```
+int setBit(int num, int i) {
+    return num | (1 << i);
+}
+```
+
+#### Clear Bit
+This method operates in almost the reverse of `setBit`. First, we create a number like `11101111`. Then, we perform an AND with num.
+
+```
+int clearBit(int num, int i) {
+    int mask = ~(1 << i);
+    return num & mask;
+}
+```
+
+To clear all bits from the most significant bit through `i` (inclusive), we create a mask with a 1 at the ith bit (`1 << i`). Then we subtract `1` from it, giving us a sequence of 0s followed by `i` 1s. We then AND our number with this mask to leave just the last `i` bits.
+
+```
+int clearBitsMSBthroughI(int num, int i) {
+    int mask = (1 << i) - 1;
+    return num & mask;
+}
+```
+
+To clear all bits from `i` through `0` (inclusive), we take a sequence of all 1s (which is -1) and shift left by `i + 1` bits. This gives us a sequence of 1s (in the most significant bits) followed by `i + 1` 0 bits.
+
+```
+int clearBitsIthrough0(int num, int i) {
+    int mask = (-1 << (i + 1));
+    return num & mask;
+}
+```
+
+#### Update Bit
+To set the ith bit to a value `v`, we first clear the bit at position `i`. Then, we shift the intended value, `v`, left by `i` bits. Finally, we OR these two numbers.
+
+```
+int updateBit(int num, int i, boolean bitIs1) {
+    int value = bitIs1 ? 1 : 0;
+    int mask = ~(1 << i);
+    return (num & mask) | (value << i);
+}
+```
