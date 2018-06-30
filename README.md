@@ -5,7 +5,8 @@
 [**Chapter 2: Linked Lists**](#chapter-2-linked-lists)  
 [**Chapter 3: Stacks and Queues**](#chapter-3-stacks-and-queues)  
 [**Chapter 4: Trees and Graphs**](#chapter-4-trees-and-graphs)  
-[**Chapter 5: Bit Manipulation**](#chapter-5-bit-manipulation)
+[**Chapter 5: Bit Manipulation**](#chapter-5-bit-manipulation)  
+[**Chapter 6: Math and Logic Puzzles**](#chapter-6-math-and-logic-puzzles)
 
 ## Chapter 1: Arrays and Strings
 
@@ -495,3 +496,139 @@ int updateBit(int num, int i, boolean bitIs1) {
     return (num & mask) | (value << i);
 }
 ```
+
+## Chapter 6: Math and Logic Puzzles
+
+### Prime Numbers
+Every positive integer can be decomposed into a product of primes.
+
+#### Divisibility
+The prime number law stated above means that, in order for a number `y` to divide a number `x` (`mod(x, y) = 0`), all primes in `y`'s prime factorization must be in `x`'s prime factorization.
+
+```
+let x = 2^(j0) * 3^(j1) * 5^(j2) * 7^(j3) * 11^(j4) * ...
+let y = 2^(k0) * 3^(k1) * 5^(k2) * 7^(k3) * 11^(k4) * ...
+
+gcd(x, y) = 2^min(j0) * 3^min(j1) * 5^min(j2) * ...
+lcm(x, y) = 2^max(j0) * 3^max(j1) * 5^max(j2) * ...
+
+gcm * lcm = 2^(j0 + k0) * 3^(j1 + k1) * ...
+          = 2^(j0) * 2^(k0) * 3^(j1) * 3^(k1) * ...
+          = xy
+```
+
+#### Checking for Primality
+The naive way is to simply iterate from `2` through `n - 1`, checking for divisibility on each iteration.
+
+```java
+public class Primality {
+    boolean primeNaive(int n) {
+        if (n < 2) return false;
+
+        for (int i = 2; i < n; i++) {
+            if (n % i == 0) return false;
+        }
+        return true;
+    }
+}
+```
+
+A small but important improvement is to iterate only up through the square root of `n`.
+
+```java
+public class Primality {
+    boolean primeSlightlyBetter(int n) {
+        if (n < 2) return false;
+
+        int sqrt = (int) Math.sqrt(n);
+        for (int i = 2; i <= sqrt; i++) {
+            if (n % i == 0) return false;
+        }
+        return true;
+    }
+}
+```
+
+In reality, all we *really* need to do is check if `n` is divisible by a prime number.
+
+#### Generating a List of Primes: The Sieve of Eratosthenes
+The Sieve of Eratosthenes is a highly efficient way to generate a list of primes. It works by recognizing that all non-prime numbers are divisible by a prime number.
+
+We start with a list of all the numbers up through some value `max`. First, we cross of all numbers divisible by `2`. Then, we look for the next prime (the next non-crossed off number) and cross off all numbers divisible by it. By crossing off all numbers divisible by `2, 3, 5, 7, 11`, and so on, we wind up with a list of prime numbers from `2` through `max`.
+
+```java
+public class Primality {
+    boolean[] sieveOfEratosthenes(int max) {
+        boolean[] flags = new boolean[max + 1];
+        int count = 0;
+
+        init(flags); // Set all flags to true other than 0 and 1
+        int prime = 2;
+
+        while (prime <= Math.sqrt(max)) {
+            /* Cross of remaining multiples of prime */
+            crossOff(flags, prime);
+
+            /* Find next value which is true */
+            prime = getNextPrime(flags, prime);
+        }
+
+        return flags;
+    }
+
+    void crossOff(boolean[] flags, int prime) {
+        /* Cross off remaining multiples of prime. We can start with (prime*prime),
+         * because if we have a k * prime, where k < prime, this value would have
+         * already been crossed off in a prior iteration. */
+        for (int i = prime * prime; i < flags.length; i += prime) {
+            flags[i] = false;
+        }
+    }
+
+    int getNextPrime(boolean[] flags, int prime) {
+        int next = prime + 1;
+        while (next < flags.length && !flags[next]) {
+            next++;
+        }
+        return next;
+    }
+}
+```
+
+Of course, there are a number of optimizations that can be made to this. One simple one is to only use odd numbers in the array, which would allow us to reduce our space useage by half.
+
+### Probability
+
+#### Probability of A and B
+`P(A and B) = P(B given A) P(A)`
+
+Bayes' Theorem: `P(A given B) = P(B given A) P(A) / P(B)`
+
+#### Probability of A or B
+`P(A or B) = P(A) + P(B) - P(A and B)`
+
+From here, getting the special case rules for independent events and for mutually exclusive events is easy.
+
+#### Independence
+`P(A and B) = P(A) P(B)`. This comes from recognizing that `P(B given A) = P(B)`, since A indicates nothing about B.
+
+"One happening tells you nothing about the other happening"
+
+#### Mutual Exclusivity
+`P(A or B) = P(A) + P(B)`
+
+"If one happens, then the other cannot happen"
+
+Two events cannot be both independent and mutually exclusive (provided both have probabilities greater than 0).
+
+### Start Talking
+Start talking, and show the interviewer how you approach a problem.
+
+### Develop Rules and Patterns
+In many cases, you will find it useful to write down "rules" or patterns that you discover while solving the problem.
+
+### Worst Case Shifting
+Many brainteasers are worst-case minimization problems, worded either in terms of *minimizing* an action or in doing something at most a specific number of times. A usefule technique is to try to "balance" the worst case. That is, if an early decision results in skewing of the worst case, we can sometimes change the decision to balance out the worst case.
+
+### Algorithm Approaches
+Brainteasers are often nothing more than algorithm questions with the technical aspects removed.
