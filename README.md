@@ -6,7 +6,8 @@
 [**Chapter 3: Stacks and Queues**](#chapter-3-stacks-and-queues)  
 [**Chapter 4: Trees and Graphs**](#chapter-4-trees-and-graphs)  
 [**Chapter 5: Bit Manipulation**](#chapter-5-bit-manipulation)  
-[**Chapter 6: Math and Logic Puzzles**](#chapter-6-math-and-logic-puzzles)
+[**Chapter 6: Math and Logic Puzzles**](#chapter-6-math-and-logic-puzzles)  
+[**Chapter 7: Object-Oriented Design**](#chapter-7-object-oriented-design)
 
 ## Chapter 1: Arrays and Strings
 
@@ -632,3 +633,56 @@ Many brainteasers are worst-case minimization problems, worded either in terms o
 
 ### Algorithm Approaches
 Brainteasers are often nothing more than algorithm questions with the technical aspects removed.
+
+## Chapter 7: Object-Oriented Design
+
+### How to Approach
+
+#### Step 1: Handle Ambiguity
+Object-oriented design questions are often intentionally vague in order to test whether you'll make assumptions or if you'll ask clarifying questioins.
+
+When being asked an object-oriented design question, you should inquire *who* is going to use it and *how* they are going to use it. Depending on the question, you may even want to go through the "six Ws": who, what, where, when, how, why.
+
+#### Step 2: Define the Core Objects
+Consider what the "core objects" in a system are. 
+
+#### Step 3: Analyze Relationships
+We now want to analyze the relationships between the objects. Which objects are members of which other objects? Do any objects inherit from any others? Are relationships many-to-many or one-to-many?
+
+#### Step 4: Investigate Actions
+What remains is to consider the key actions that the objects will take and how they relate to each other.
+
+### Design Patterns
+
+#### Singleton Class
+The Singleton pattern ensures that a class has only one instance and ensures access to the instance through the application. It can be useful in cases when you have a "global" object with exactly one instance.
+
+```java
+public class Restaurant {
+    private static Restaurant _instance = null;
+    protected Restaurant() { ... }
+    public static Restaurant getInstance() {
+        if (_instance == null) {
+            _instance = new Restaurant();
+        }
+        return _instance;
+    }
+}
+```
+
+It should be noted that many people dislike the Singleton design pattern, even calling it an "anti-pattern". One readon for this is that it can interfere with unit testing.
+
+#### Factory Method
+The Factory Method offers an interface for creating an instance of a class, with its subclasses deciding which class to instantiate. You might want to implement this with the creator class being abstract and not providing an implementation for the Factory method. Or, you could have the Creator class be a concrete class that provides an implementation for the Factory method. In this case, the Factory method would take a parameter representing which class to instantiate.
+
+```java
+public class CardGame {
+    public static CardGame createCardGame(GameType type) {
+        if (type == GameType.Poker)
+            return new PokerGame();
+        else if (type == GameType.BlackJack)
+            return new BlackJackGame();
+        return null;
+    }
+}
+```
