@@ -7,7 +7,8 @@
 [**Chapter 4: Trees and Graphs**](#chapter-4-trees-and-graphs)  
 [**Chapter 5: Bit Manipulation**](#chapter-5-bit-manipulation)  
 [**Chapter 6: Math and Logic Puzzles**](#chapter-6-math-and-logic-puzzles)  
-[**Chapter 7: Object-Oriented Design**](#chapter-7-object-oriented-design)
+[**Chapter 7: Object-Oriented Design**](#chapter-7-object-oriented-design)  
+[**Chapter 8: Recursion and Dynamic Programming**](#chapter-8-recursion-and-dynamic-programming)
 
 ## Chapter 1: Arrays and Strings
 
@@ -684,5 +685,100 @@ public class CardGame {
             return new BlackJackGame();
         return null;
     }
+}
+```
+
+## Chapter 8: Recursion and Dynamic Programming
+When you hear a problem beginning with the following statements, it's often a good candidate for recursion: "Design an algorithm to compute the nth...", "Write code to list the first n...", "Implement a method to compute all...", and so on.
+
+### How to Approach
+Recursive solutions, by definition, are built off of solutions to subproblems. There are many ways you might divide a problem into subproblems, including bottom-up, top-down, and half-and-half.
+
+#### Bottom-Up Approach
+The bottom-up approach is often the most intuitive. We start with knowing how to solve the problem for a simple case, like a list with one element. Then we figure out how to solve the problem for two elements, then for three elements, and so on. The key here is to think about how you can *build* the solution for one case off of the previous case (or multiple previous cases).
+
+#### Top-Down Approach
+The top-down approach can be more complex since it's less concrete. But sometimes, it's the best way to think about the problem.
+
+In these problems, we think about how we can divide the problem for case N into subproblems.
+
+Be careful of overlap between the cases.
+
+#### Half-and-Half Approach
+It's often effective to divide the data set in half.
+
+For example, binary search works with a "half-and-half" approach.
+
+### Recursive vs. Iterative Solutions
+Each recursive call adds a new layer to the stack, which means that if your algorithm recurses to a depth of `n`, it uses at least `O(n)` memory.
+
+For this reason, it's often better to implement a recursive algorithm iteratively. *All* recursive algorithms can be implemented iteratively, although sometimes the code to do so is much more complex.
+
+### Dynamic Programming & Memoization
+Dynamic programming is mostly just a matter of taking a recursive algorithm and finding the overlapping subproblems (that is, the repeated calls). You then cache those results for future recursive calls.
+
+> A note on terminology: Some people call top-down dynamic programming "memoization" and only use "dynamic programming" to refer to bottom-up work. We do not make such a distinction here. We call both dynamic programming.
+
+One of the simplest examples of dynamic programming is computing the nth Fibonacci number.
+
+#### Fibonacci Numbers
+
+*Recursive:* `O(2^n)`
+
+```
+int fibonacci(int i) {
+    if (i == 0 || i == 1) return i;
+    return fibonacci(i - 1) + fibonacci(i - 2);
+}
+```
+
+*Top-Down Dynamic Programming (or Memoization):* `O(n)`
+
+
+```
+int fibonacci(int n) {
+    return fibonacci(n, new int[n + 1]);
+}
+
+int fibonacci(int i, int[] memo) {
+    if (i == 0 || i == 1) return i;
+
+    if (memo[i] == 0) {
+        memo[i] = fibonacci(i - 1, memo) + fibonacci(i - 2, memo);
+    }
+    return memo[i];
+}
+```
+
+*Bottom-Up Dynamic Programming:* `O(n)`
+
+
+```
+int fibonacci(int n) {
+    if (n == 0 || n == 1) return n;
+
+    int[] memo = new int[n];
+    memo[0] = 0;
+    memo[1] = 1;
+    for (int i = 2; i < n; i++) {
+        memo[i] = memo[i - 1] + memo[i - 2];
+    }
+    return memo[n - 1] + memo[n - 2];
+}
+```
+
+If you really think about how this works, you only use `memo[i]` for `memo[i + 1]` and `memo[i + 2]`. You don't need it after that.
+
+```
+int fibonacci(int n) {
+    if (n == 0) return 0;
+    int a = 0;
+    int b = 1;
+    for (int i = 2; i < n; i++) {
+        int c = a + b;
+        a = b;
+        b = c;
+    }
+    return a + b;
 }
 ```
