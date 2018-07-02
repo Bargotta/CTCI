@@ -8,7 +8,8 @@
 [**Chapter 5: Bit Manipulation**](#chapter-5-bit-manipulation)  
 [**Chapter 6: Math and Logic Puzzles**](#chapter-6-math-and-logic-puzzles)  
 [**Chapter 7: Object-Oriented Design**](#chapter-7-object-oriented-design)  
-[**Chapter 8: Recursion and Dynamic Programming**](#chapter-8-recursion-and-dynamic-programming)
+[**Chapter 8: Recursion and Dynamic Programming**](#chapter-8-recursion-and-dynamic-programming)  
+[**Chapter 9: System Design and Scalability**](#chapter-9-system-design-and-scalability)
 
 ## Chapter 1: Arrays and Strings
 
@@ -782,3 +783,113 @@ int fibonacci(int n) {
     return a + b;
 }
 ```
+
+## Chapter 9: System Design and Scalability
+
+### Handling the Questions
+* Communicate
+* Go broad first
+* Use the whiteboard
+* Acknowledge interviewer concerns
+* Be careful about assumptions
+* State your assumptions explicitly
+* Estimate when necessary
+* Drive
+
+### Design: Step-By-Step
+
+#### Step 1: Scope the Problem
+
+#### Step 2: Make Reasonable Assumptions
+
+#### Step 3: Draw the Major Components
+It may be helpful to ignore major scalability challenges and just pretend that the simple, obvious approaches will be okay. You'll handle the big issues in Step 4.
+
+#### Step 4: Identify the Key Issues
+What will be the bottlenecks or major challenges in the system?
+
+#### Step 5: Redesign for the Key Issues
+
+### Algorithms that Scale: Step-By-Step
+In some cases, you're not being asked to design an entire system. You're just being asked to design a single feature or algorithm, but you have to do it in a scalable way.
+
+#### Step 1: Ask Questions
+
+#### Step 2: Make Believe
+Pretend that the data can all fit on one machine and there are no memory limitations.
+
+#### Step 3: Get Real
+
+#### Step 4: Solve Problems
+
+### Key Concepts
+All of these are deep, complex topics, so we encourage you to use online resources for more research.
+
+#### Horizontal vs. Vertical Scaling
+A system can be scaled one of two ways:
+
+* Vertical scaling means increasing the resources of a specific node. For example, you might additional memory to a server to improve its ability to handle load changes.
+* Horizontal scaling means increasing the number of nodes. For example, you might add additional servers, thus decreasing the load on any one server.
+
+Vertical scaling is generally easier than horizontal scaling, but it's limited. You can only add so much memory or disk space.
+
+#### Load Balancer
+Typically, some frontend parts of a scalable website will be thrown behind a load balancer. This allows a system to distribute the load evenly so that one server doesn't crash and take down the whole system. To do so, of course, you have to build out a network of cloned servers that all have essentially the same code and access to the same data.
+
+#### Database Denormalization and NoSQL
+Joins in a relational database such as SQL can get very slow as the system grows bigger. For this reason, you would generally avoid them.
+
+Denormalization is one part of this. Denormalization means adding redundant information into a database to speed up reads. Or, you can go with a NoSQL database. A NoSQL database does not support joins and might structure data in a different way. It is designed to scale better.
+
+#### Database Partitioning (Sharding)
+Sharding means splitting the data across multiple machines while ensuring you have a way of figuring out which data is on which machine.
+
+A few commons ways of partitioning include:
+
+* **Vertical Partitioning**: This is basically partitioning by feature. One drawback of this is that if one of these tables gets very large, you might need to repartition that database (possibly using a different partitioning scheme).
+
+* **Key-Based (or Hash-Based) Partitioning**: This uses some part of the data (for example an ID) to partition it. A very simple way to do this is to allocate N servers and put the data on `mod(key, n)`. One issue with this is that the number of servers you have is effectively fixed. Adding additional servers means reallocating all the data - a very expensive task.
+
+* **Directory-Based Partitioning**: In this scheme, you maintain a lookup table for where the data can be found. This makes it relatively easy to add additional servers, but it comes with two major drawbacks. First, the lookup table can be a single point of failure. Second, constantly accessing this table impacts performance.
+
+Many architects actually end up using multiple partitioning schemes.
+
+#### Caching
+An in-memory cache can deliver very rapid results. It is a simple key-value pairing and typically sits between your application layer and your data store.
+
+When you cache, you might cache a query and its results directly. Or, alternatively, you can cache the specific object (for example, a rendered version of part of the website).
+
+#### Asynchronous Processing & Queues
+Slow operations should ideally be done asynchronously. Otherwise, a user might get stuck waiting and waiting for a process to complete.
+
+In some cases, we can do this in advance (i.e., we can pre-process). For example, we might have a queue of jobs to be done that update some part of the website.
+
+In other cases, we might tell the user to wait and notify them when the process is done.
+
+#### Networking Metrics
+Some of the most important metrics around networking include:
+
+* **Bandwidth**: This is the maximum amount of data that can be transferred in a unit of time. It is typically expressed in bits per second.
+* **Throughput**: Whereas bandwidth is the maximum data that can be transferred in a unit of time, throughput is the actual amount of data that is transferred.
+* **Latency**: This is how long it takes data to go from one end to the other. That is, it is the delay between the sender sending information and the receiver receiving it.
+
+Latency can be easy to disregard, but it can be very important in particular situations (for example, in online games). However, there is often little you can do about latency.
+
+#### MapReduce
+A MapReduce program is typically used to process large amounts of data. As its name suggests, a MapReduce program requires you to write a Map step and a Reduce step. The rest is handled by the system.
+
+* Map takes in some data and emits a `<key, value>` pair.
+* Reduce takes a key and a set of associated values and "reduces" them in some way, emitting a new key and value. The results of this might be fed back into the Reduce program for more reducing.
+
+MapReduce allows us to do a lot of processing in parallel, which makes processing huge amounts of data more scalable.
+
+### Considerations
+In addition to the earlier concepts to learn, you should consider the following issues when designing a system.
+
+* **Failures**
+* **Availability and Reliability**: Availability is a function of the percentage of time the system is operational. Reliability is a function of the probability that the system is operational for a certain unit of time.
+* **Read-heavy vs. Write-heavy**: If it's write-heavy, you could consider queuing up the writes (but think about potential failure here!). If it's read-heavy, you might want to cache. Other design decisions could change as well.
+* **Security**
+
+### There is no "Perfect" system
+There are always tradeoffs. Understand use cases, scope a problem, make reasonable assumptions, create a solid design based on those assumptions, and be open about the weaknesses of your design.
