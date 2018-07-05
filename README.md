@@ -11,7 +11,8 @@
 [**Chapter 8: Recursion and Dynamic Programming**](#chapter-8-recursion-and-dynamic-programming)  
 [**Chapter 9: System Design and Scalability**](#chapter-9-system-design-and-scalability)  
 [**Chapter 10: Sorting and Searching**](#chapter-10-sorting-and-searching)  
-[**Chapter 11: Testing**](#chapter-11-testing)
+[**Chapter 11: Testing**](#chapter-11-testing)  
+[**Chapter 13: Java**](#chapter-13-java)
 
 ## Chapter 1: Arrays and Strings
 
@@ -1095,3 +1096,23 @@ Now that you understand the details, you want to break down the problem into tes
 
 #### Step 3: Create Specific, Manageable Tests
 In the real world, you will be dealing with customers, and you can't give them instructions that they can't or won't do.
+
+## Chapter 13: Java
+
+### How to Approach
+1. Create an example of the scenario, and ask yourself how things should play out.
+2. Ask yourself how other languages would handle this scenario.
+3. Consider how you would design this situation if you were the language designer. What would the implications of each choice be?
+
+### Overloading vs. Overriding
+Overloading is a term used to describe when two methods have the same name but differ in the type or number of arguments.
+
+Overriding, however, occurs when a method shares the same name and function signature as another method in its super class.
+
+### Collection Framework
+Here are some of the most useful items from Java's collection framework:
+
+* `ArrayList`: An ArrayList is a dynamically resizing array, which grows as you insert elements.
+* `Vector`: A vector is very similar to an ArrayList, except that is it synchronized.
+* `LinkedList`
+* `HashMap`
