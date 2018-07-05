@@ -10,7 +10,8 @@
 [**Chapter 7: Object-Oriented Design**](#chapter-7-object-oriented-design)  
 [**Chapter 8: Recursion and Dynamic Programming**](#chapter-8-recursion-and-dynamic-programming)  
 [**Chapter 9: System Design and Scalability**](#chapter-9-system-design-and-scalability)  
-[**Chapter 10: Sorting and Searching**](#chapter-10-sorting-and-searching)
+[**Chapter 10: Sorting and Searching**](#chapter-10-sorting-and-searching)  
+[**Chapter 11: Testing**](#chapter-11-testing)
 
 ## Chapter 1: Arrays and Strings
 
@@ -1020,3 +1021,77 @@ public class BinarySearch {
     }
 }
 ```
+
+## Chapter 11: Testing
+Testing problems usually fall under one of four categories: (1) Test a real world object (like a pen); (2) Test a piece of software; (3) Write test code for a function; (4) Troubleshoot an existing issue.
+
+### What the Interviewer Is Looking For
+Interviewers want to test the following:
+
+* *Big Picture Understanding:* Are you a person who understands what the software is really about? Can you prioritize test cases properly?
+* *Knowing How the Pieces Fit Together:* Do you understand how the software works, and how it might fit into a greater ecosystem?
+* *Organization:* Do you approach the problem in a structured manner?
+* *Practicality:* Can you actually create reasonable testing plans?
+
+### Testing a Real World Object
+
+#### Step 1: Who will use it? And why?
+
+#### Step 2: What are the use cases?
+
+#### Step 3: What are the bounds of use?
+
+#### Step 4: What are the stress/failure conditions?
+
+#### Step 5: How would you perform the testing?
+
+### Testing a Piece of Software
+Testing a piece of software is actually very simialar to testing a real world object. The major difference is that software testing generally places a greater emphasis on the details of performing testing.
+
+Note that software testing has two core aspects to it:
+
+* *Manual vs. Automated Testing*
+* *Black Box Testing vs. White Box Tesing:* This distinction refers to the degree of acess we have into the software. In black box testing, we're just given the software as-is and need to test it. With white box testing, we have additional programmatic access to test individual functions. We can also automate some black box testing, although it's certainly much harder.
+
+#### Step 1: Are we doing Black Box Testing or White Box Testing?
+
+#### Step 2: Who will use it? And why?
+
+#### Step 3: What are the use cases?
+
+#### Step 4: What are the bounds of use?
+
+#### Step 5: What are the stress conditions/failure conditions?
+
+#### Step 6: What are the test cases? How would you perform the testing?
+
+### Testing a Function
+
+#### Step 1: Define the test cases
+In general, you should think about the following types of test cases:
+
+* *The normal case*
+* *The extremes*
+* *Nulls and "illegal" input*
+* *Strange input*
+
+#### Step 2: Define the expected result
+Note: In some cases, you might want to validate additional aspects. For instance, if the `sort` method returns a new sorted copy of the arrya, you should probably validate that the original array has not been touched.
+
+#### Step 3: Write test code
+
+### Troubleshooting Questions
+
+#### Step 1: Understand the Scenario
+The first thing you should do is ask questions to understandas as much about the situation as possible.
+
+* How long has the user been experiencing this issue?
+* What version of the browser is it? What operating system?
+* Does the issue happen consistently, or how often does it happen? When does it happen?
+* Is there an error report that launches?
+
+#### Step 2: Break Down the Problem
+Now that you understand the details, you want to break down the problem into testable units.
+
+#### Step 3: Create Specific, Manageable Tests
+In the real world, you will be dealing with customers, and you can't give them instructions that they can't or won't do.
