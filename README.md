@@ -12,7 +12,8 @@
 [**Chapter 9: System Design and Scalability**](#chapter-9-system-design-and-scalability)  
 [**Chapter 10: Sorting and Searching**](#chapter-10-sorting-and-searching)  
 [**Chapter 11: Testing**](#chapter-11-testing)  
-[**Chapter 13: Java**](#chapter-13-java)
+[**Chapter 13: Java**](#chapter-13-java)  
+[**Chapter 14: Databases**](#chapter-14-databases)
 
 ## Chapter 1: Arrays and Strings
 
@@ -1116,3 +1117,38 @@ Here are some of the most useful items from Java's collection framework:
 * `Vector`: A vector is very similar to an ArrayList, except that is it synchronized.
 * `LinkedList`
 * `HashMap`
+
+## Chapter 14: Databases
+
+### SQL Syntax and Variations
+```
+Explicit Join
+SELECT CourseName, TeacherName
+FROM Courses INNER JOIN Teachers
+ON Courses.TeacherID = Teachers.TeacherID
+
+Implicit Join
+SELECT CourseName, TeacherName
+FROM Courses, Teachers
+WHERE Courses.TeacherID =
+      Teacher.TeacherID
+```
+
+### Denormalized vs. Normalized Databases
+Normalized databases are designed to minimize redundancy, while denomalized databases are designed to optimize read time.
+
+In traditional normalized databases, many common queries will require expensive joins. Denomalization is commonly used to create highly scalable systems.
+
+### Small Database Design
+
+#### Step 1: Handle Ambiguity
+
+#### Step 2: Define the Core Objects
+
+#### Step 3: Analyze Relationships
+
+#### Step 4: Investigate Actions
+Fill in the details. Walk through the common actions that will be taken and understand how to store and retrieve the relevant data.
+
+### Large Database Design
+When designing a large, scalable database, joins are generally very slow. Thus, you must *denomalize* your data. Think carefully about how data will be used - you'll probably need to duplicate the data in multiple tables.
