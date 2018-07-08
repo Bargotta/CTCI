@@ -14,7 +14,8 @@
 [**Chapter 11: Testing**](#chapter-11-testing)  
 [**Chapter 13: Java**](#chapter-13-java)  
 [**Chapter 14: Databases**](#chapter-14-databases)  
-[**Chapter 15: Threads and Locks**](#chapter-15-threads-and-locks)
+[**Chapter 15: Threads and Locks**](#chapter-15-threads-and-locks)  
+[**Advanced Topics**](#advanced-topics)
 
 ## Chapter 1: Arrays and Strings
 
@@ -1122,6 +1123,7 @@ Here are some of the most useful items from Java's collection framework:
 ## Chapter 14: Databases
 
 ### SQL Syntax and Variations
+
 ```
 Explicit Join
 SELECT CourseName, TeacherName
@@ -1305,3 +1307,228 @@ In order for a deadlock to occur, you must have all four of the following condit
 4. *Circular Wait:* Two or more processes form a circular chain where each process is waiting on another resource in the chain.
 
 Deadlock prevention entails removing any of the above conditions, but this can be tricky. Most deadlock prevention algorithms focus on avoiding condition #4: circular wait.
+
+## Advanced Topics
+
+### Useful Math
+
+#### Sum of Integers 1 though N
+`1 + 2 + ... + n = n(n+1) / 2`
+
+#### Sum of Powers of 2
+`2^0 + 2^1 + 2^2 + ... + 2^n = 2^(n+1) - 1`
+
+**Take Away:** The sum of a sequence of powers of two is roughly equal to the *next* value in the sequence.
+
+#### Bases of Logs
+What is the relationship between `log_b(k)` and `log_x(k)`?
+
+`log_b(k) = log_x(k)/log_x(b)`
+
+**Takeaway:** Logs of different bases are only off by a constant factor. For this reason, we largely ignore what the base of a log is within a big O expression. It doesn't matter since we drop constants anyway.
+
+#### Permutations
+How many ways are there of rearranging a string of n unique characters? The total number of strings is `n!`.
+
+What if you were forming a k-length string (with all unique characters) from n total unique characters? `n! / (n - k)!`.
+
+#### Combinations
+Suppose you have a set of n distinct characters. How many ways are there of selecting k characters into a new set (where order doesn't matter)? That is, how many k-sized subsets are there out of n distinct elements? `n-choose-k = n! / (k! (n - k)!)`.
+
+#### Proof by Induction
+Task: Prove statement `P(k)` is true for all `k >= b`.
+
+* Base Case: Prove the statement to be true for `P(b)`.
+* Assumption: Assume the statement is true for `P(n)`.
+* Inductive Step: Prove that *if* the statement is true for `P(n)`, then it's true for `P(n+1)`.
+
+### Topological Sort
+A topological sort of a directed graph is a way of ordering the list of nodes such that if `(a, b)` is an edge in the graph then `a` will appear before `b` in the list. If a graph has a cycles or is not directed, then there is no topological sort.
+
+We can construct a topological sort with the following approach:
+1. Identify all nodes with no incoming edges and add those nodes to our topological sort.
+2. When we do the above, remove each node's outbound edges from the graph.
+3. Repeat the above, adding nodes with no incoming edges and removing their outbound edges. When all the nodes have been added to the topological sort, then we are done.
+
+More formally, the algorithm is this:
+1. Create a queue `order`, which will eventually store the valid topological sort. It is currently empty.
+2. Create a queue `processNext`. This queue will store the next nodes to process.
+3. Count the number of incoming edges of each node and set a class variable `node.inbound`. Nodes typically only store their outgoing edges. However, you can count the inbound edges by walking through each node `n` and, for each of its outgoing edges `(n, x)`, incrementing `x.inbound`.
+4. Walk through the nodes again and add to `processNext` any node where `x.inbound == 0`.
+5. While `processNext` is not empty, do the following:
+    * Remove first node `n` from `processNext`.
+    * For each edge `(n, x)`, decrement `x.inbound`. If `x.inbound == 0`, append `x` to `processNext`.
+    * Append `n` to `order`.
+6. If `order` contains all the nodes, then it has succeeded. Otherwise, the topological sort has failed due to a cycle.
+
+### Dijkstra's Algorithm
+Dijkstra's algorithm is a way to find the shortest path between two points in a weighted directed graph (which might have cycles). It finds the minimum weight path from a start node s to *every* node on the graph. All edges must have positive values.
+
+It picks the unvisited vertex with the lowest distance, calculates the distance through it to each unvisited neighbor, and updates the neighbor's distance if smaller.
+
+*Priority Queue and Runtime*
+
+* If you implemented the priority queue with an array, the total runtime would be `O(v^2)` which is better for dense graphs.
+* If you implemented the prioirty queue with a min heap, the total runtime would be `O((v + e) log v)` which is better for sparse graphs.
+
+### Hash Table Collision Resolution
+
+#### Chaining with Linked Lists
+With this approach (which is the most common), the hash table's array maps to a linked list of items. As long as the number of collisions is farily small, this will be quite efficient. In the worst case, lookup is `O(n)`, where `n` is the number of elements in the hash table.
+
+#### Chaining with Binary Search Trees
+Rather than storing collisions in a linked list, we could store collisions in a binary search tree. This will bring the worst-case runtime to `O(log n)`. In practice, we would rarely take this approach unless we expected an extremely nonuniform distribution.
+
+#### Open Addressing with Linear Probing
+In this approach, when a collision occurs (there is already an item stored at the designated index), we just move onto the next index in the array until we find an open spot. (Or, sometime, some other fixed distance, like the index + 5.)
+
+If the number of collisions is low, this is a very fast and space-efficient solution.
+
+One obvious drawback of this is that the total number of entries in the hash table is limited by the size of the array. This is not the case with chaining.
+
+There's another issue here. Consider a hash table with an underlying array of size 100 where indexes 20 through 29 are filled (and nothing else). What are the odds of the next insertion going to index 30? The odds are 10% because an item mapped to any index between 20 and 30 will wind up at index 30. This causes an issue called *clustering*.
+
+#### Quadratic Probing and Double Hashing
+The distance between probes does not need to be linear. You could, for example, increase the probe distance quadratically. Or, you could use a second hash function to determine the probe distance.
+
+### Rabin-Karp Substring Search
+The brute force way to search for a substring `S` in a larger string `B` takes `O(s(b-s))`. We do this by searching through the first `b - s + 1` characters in `B` and, for each, checking if the next `s` characters match `S`.
+
+The Rabin-Karp algorithm optimizes this with a little trick: if two strings are the same, they must have the same hash value. (The converse, however, is not true.)
+
+Therefore, if we efficiently precompute a hash value for each sequence of `s` characters within `B`, we can find the locations of `S` in `O(b)` time. We then just need to validate that those locations really do match `S`.
+
+In pratice, we would use a *rolling hash function*, such as the Rabin fingerprint. This essentially treats a string like doe as a base 128 (or however many characters are in our alphabet) number.
+
+`hash('doe') = code('d') * 128^2 + code('o') * 128^1 + code('e') * 128^0`
+
+This hash function will allow us to remove the `d`, shift the `o` and `e`, and then add in the space.
+    
+`hash('oe ') = (hash('doe') - code('d') * 128^2) * 128 + code(' ')`
+
+This will considerably cut down on the number of false matches. Using a good hash function like this will give us expected time complexity of `O(s + b)`, although the worst case is `O(sb)`.
+
+### AVL Trees
+An AVL tree is one of two common ways to implement tree balancing. We will only discuss insertions here, but you can look up deletions separately is you're interested.
+
+#### Properties
+An AVL tree stores in each node the height of the subtrees rooted at this node. Then, for any node, we can check if it is height balanced: that the height of the left subtree and the height of the right subtree differ by no more than one.
+
+```
+balance(n) = n.left.height - n.right.height
+-1 <= balance(n) <= 1
+```
+
+#### Inserts
+When you insert a node, the balance of some nodes might change to -2 or 2. Therefore, when we "unwind" the recursive stack, we check and fix the balance at each node. We do this through a series of rotations.
+
+Rotations can be either left or right rotations. The right rotation is an inverse of the left rotation.
+
+#### Case 1: Balance is 2.
+In this case, the left's height is two bigger than the right's height. If the left side is larger, the left subtree's extra nodes must be hanging to the left (as in LEFT LEFT SHAPE) or hanging to the right (as in LEFT RIGHT SHAPE). If it looks like the LEFT RIGHT SHAPE, transform it with a left rotation into a LEFT LEFT SHAPE then into BALANCED with a right rotation. If it looks like the LEFT LEFT SHAPE already, just transform it into BALANCED with a right rotation.
+
+#### Case 2: Balance is -2.
+This case is the mirror image of the prior case.
+
+We recurse up the tree, fixing any imbalances. If we ever achieve a balance of 0 on a subtree, then we know that we have completed all the balances. This portion of the tree will not cause another, higher subtree to have a balance of -2 or 2.
+
+### Red-Black Trees
+Red-black trees (a type of self-balancing binary search tree) do not ensure quite as strict balancing, but the balancing is still good enough to ensure `O(log N)` insertions, deletions, and retrievals. They require a bit less memory and can rebalance faster (which means faster insertions and removals), so they are often use in situations where the tree will be modified frequently.
+
+Red-black trees operate by enforcing a quasi-alternating red and black coloring (under certain rules, described below) and then requiring every path from a node to its leaves to have the same number of black nodes. Doing so leads to a reasonably balance tree.
+
+#### Properties
+1. Every node is either red or black.
+2. The root is black.
+3. The leaves, which are NULL nodes, are considered black.
+4. Every red node must have two black children. That is, a red node cannot have red children (although a black node can have black children).
+5. Every path from a node to its leaves must have the same number of black children.
+
+#### Why It Balances
+Consider two paths from a node (say, the root) to its leaves. The paths must have the same number of black nodes (property #5), so let's assume that their red node counts are as different as possible: one path contains the minimum number of red nodes and the other contains the maximum number.
+* Path 1 (Min Red): The minimum number of red nodes is zero. Therefore, path 1 has b nodes total.
+* Path 2 (Max Red): The maximum number of red ndoes is b, since red nodes must have black children and there are b black nodes. Therefore, path 2 has 2b nodes total.
+
+Therefore, even in the most extreme case, the lengths of the paths cannot differ by more than a factor of two. That's good enough the ensure an `O(log N)` find and insert runtime. (We'll only discuss insertion here, but you can look up deletion on your own.)
+
+#### Insertion
+Inserting a new node into a red-black tree starts off with a typical binary search tree insertion.
+* New nodes are inserted at a leaf, which means that they replace a black node.
+* New nodes are always colored red and are given two black leaf (NULL) nodes.
+
+Once we've done that, we fix any resulting red-black property violations. We have two possible violations:
+* Red violations: A red node has a red child (or the root is red).
+* Black violations: One path has more blacks than another path.
+
+The node inserted is red. We didn't change the number of black nodes on any path to a leaf, so we know that we won't have a black violation. However, we might have a red violation.
+
+In the special case where the root is red, we can always just turn it black to satisfy property 2, without violating the other constraints.
+
+Otherwise, if there's a red violation, then this means that we have a red node under another red node. Oops!
+
+Let's call N the current node. P is N's parent. G is N's grandparent. U is N's uncle and P's sibling. We know that:
+* N is red and P is red, since we have a red violation.
+* G is definitly black, since we didn't *previously* have a red violation.
+
+The unknown parts are:
+* U could be either red or black.
+* U could be either a left or right child.
+* N could be either a left or right child.
+
+By simple combinatorics, that's eight cases to consider. Fortunately, some of these cases will be equivalent.
+
+#### Case 1: U is red:
+It doesn't matter whether U is a left or right child, nor whether P is a left or right child. We can merge four of our eight cases into one.
+
+If U is red, we can just toggle the colors of P, U, and G. Flip  G from black to red. Flip P and U from red to black. We haven't changed the number of black nodes in any path.
+
+However, by making G red, we might have created a red violation with G's parent. If so, we recursively apply the full logic to handle a red violation, where this G becomes the new N.
+
+Note that in the general recursive case, N, P, and U may also have subtrees in place of each black NULL leaf. In case 1, these subtrees stay attached to the same parents, as the tree structure remains unchanged.
+
+#### Case 2: U is black:
+We'll need to consider the configurations (left vs. right child) of N and U. In each case, our goal is to fix up the red violation (red on top of red) without:
+* Messing up the ordering of the binary search tree
+* Introducing a black violation (more black nodes on on path than another).
+
+If we can do this, we're good. In esch of the cases below, the red violation is fixed with rotations that maintain the node ordering.
+
+*Case A: N and P are both left children.*
+
+We resolve the red violation with a right rotation of N, P, and G and the associated recoloring: P goes from red to black, and G goes from black to red. In all, we have: P (black), N and G (red), N and G's children (black).
+
+*Case B: P is a left child, and N is a right child.*
+
+We resolve the red violation with a left rotation followed by a right rotation, changing N from red to black and G from black to red.
+
+*Case C: N and P are both right children.*
+
+This is a mirror image of case A.
+
+*Case D: N is a left child, and P is a right child.*
+
+This is a mirror image of case B.
+
+### MapReduce
+MapReduce is used widely in system design to process large amounts of data in parallel. As its name suggests, a MapReduce program requires you to write a Map step and a Reduce step. The rest is handled by the system.
+
+1. The system splits up the data across different machines.
+2. Each machine starts running the user-provided Map program.
+3. The Map program takes some data and emits a `<key, value>` pair.
+4. The system-provided `Shuffle` process reorganizes the data so that all `<key, value>` pairs associated with a given key go to the same machine, to be processed by `Reduce`.
+5. The user-provided `Reduce` program takes a key and a set of associated values and "reduces" then in some way, emitting a new key and value. The results of this might be fed back into the Reduce program for more reducing.
+
+*In many cases*, it's useful to think about what the `Reduce` step should do first, and then design the `Map` step around that. What data does `Reduce` need to have to do its job?
+
+### Additional Studying
+* **Bellman-Ford Algorithm:** Finds the shortest paths from a single node in a weighted directed graph with positive and negative edges.
+* **Floyd-Warshall Algorithm:** Finds the shortest paths in a weighted graph with positive or negative weight edges (but no negative weight cycles).
+* **Minimum Spanning Tree:** In a weighted, connected, undirected graph, a spanning tree is a tree that connects all the vertices. The minimum spanning tree is the spanning tree with minimum weight. There are various algorithms to do this.
+* **B-Trees:** A self-balancing search tree (not a binary search tree) that is commonly used on disks or other storage devices. It is similar to a red-black tree, but uses fewer I/O operations.
+* **A\*:** Find the least-cost path between a source node and a goal node (or one of several goal nodes). It extends Dijkstra's algorithm and achieves better performance by using heuristics.
+* **Interval Trees:** An extension of a balances binary search tree, but storing intervals (low -> high ranges) instead of simple values.
+* **Graph coloring:** A way of coloring the nodes in a graph such that no two adjacent vertices have the same color. There are various algorithms to do things like determine if a graph can be colored with only k colors.
+* **P, NP, and NP-Complete**: P, NP, and NP-complete refer to classes of problems. P problems are problems that can be quickly solved (where "quickly" means polynomial time). NP problems are those where, given a solution, the solution can be quickly verified. NP-Complete problems are a subset of NP problems that can all be reduced to each other (that is, if you found a solution to on problem, you could tweak the solution to solve other problems in the set in polynomial time).
+* **Combinatorics and Probability:** There are various things you can learn about here, such as random variables, expected value, and n-choose-k.
+* **Bipartite Graph:** A bipartite graph is a graph where you can divide its nodes into two sets such that every edge stretches across the two sets. There is an algorithm to check if a graph is a bipartite graph. Note that a bipartite graph is equivalent to a graph that can be colored with two colors.
+* **Regular Expressions:** You should know that regular expressions exist and what they can be used for (roughly). You can also learn about how an algorithm to match regular expressions would work. Some of the basic syntax behind regular expressions could be useful as well.
