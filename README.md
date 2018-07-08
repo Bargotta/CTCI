@@ -13,7 +13,8 @@
 [**Chapter 10: Sorting and Searching**](#chapter-10-sorting-and-searching)  
 [**Chapter 11: Testing**](#chapter-11-testing)  
 [**Chapter 13: Java**](#chapter-13-java)  
-[**Chapter 14: Databases**](#chapter-14-databases)
+[**Chapter 14: Databases**](#chapter-14-databases)  
+[**Chapter 15: Threads and Locks**](#chapter-15-threads-and-locks)
 
 ## Chapter 1: Arrays and Strings
 
@@ -1152,3 +1153,155 @@ Fill in the details. Walk through the common actions that will be taken and unde
 
 ### Large Database Design
 When designing a large, scalable database, joins are generally very slow. Thus, you must *denomalize* your data. Think carefully about how data will be used - you'll probably need to duplicate the data in multiple tables.
+
+## Chapter 15: Threads and Locks
+
+### Threads in Java
+Every thread in Java is created and controlled by a unique object of the `java.lang.Thread` class. When a standalone application is run, a user thread is automatically created to execute the `main()` method. This thread is called the main thread.
+
+In Java, we can implement threads in one of two ways:
+
+* By implementing the `java.lang.Runnable` interface
+* By extending the `java.lang.Thread` class
+
+#### Implementing the Runnable Interface
+The `Runnable` interface has the following very simple structure:
+
+```
+public interface Runnable {
+    void run();
+}
+```
+
+To create and use a thread using this interface, we do the following:
+
+1. Create a class which implements the `Runnable` interface. An object of this class is a `Runnable` object.
+2. Create an object of type `Thread` by passing a `Runnable` object as argument to the `Thread` constructor. The `Thread` object now has a `Runnable` object that implements the `run()` method.
+3. The `start()` method is invoked on the `Thread` object created in the previous step.
+
+#### Extending the Thread Class
+This will almost always mean that we override the run() method, and the subclass may also call the thread constructor explicitly in its constructor.
+
+This will be very similar to the first approach. The difference is that since we are extending the `Thread` class, rather than just implementing an interface, we can call `start()` on the instance of the class itself.
+
+#### Extending the Thread Class vs. Implementing the Runnable Interface
+When creating threads, there are two reasons why implementing the `Runnable` interface may be preferable to extending the `Thread` class:
+
+* Java does not support multiple inheritance. Therefore, extending the `Thread` class means that the subclass cannot extend any other class.
+* A class might only be interested in being runnable, and therefore, inheritimg the full overhead of the `Thread` class would be excessive.
+
+### Synchronization and Locks
+Threads within a given process share the same memory space, which is both a positive and a negative. It enables threads to share data, which can be valuable. However, it also creates the opportunity for issues when two threads modify a resource at the same time. Java provides synchronization in order to control access to shared resources.
+
+The keyword `synchronized` and the `lock` form the basis for implementing synchronized execution of code.
+
+#### Synchronized Methods
+We restrict access to shared resources through the use of the `synchronized` keyword. It can be applied to methods and code blocks, and restricts multiple threads from executing the code simultaneously *on the same object*.
+
+```java
+public class MyClass extends Thread {
+    private String name;
+    private MyObject myObj;
+
+    public MyClass(MyObject obj, String n) {
+        name = n;
+        myObj = obj;
+    }
+
+    public void run() {
+        myObj.foo(name);
+    }
+}
+
+public class MyObject {
+    public synchronized void foo(String name) {
+        try {
+            System.out.println("Thread " + name + ".foo(): starting");
+            Thread.sleep(3000);
+            System.out.println("Thread " + name + ".foo(): ending");
+        } catch (InterruptedException exc) {
+            System.out.println("Thread " + name + ".foo(): interrupted");
+        }
+    }
+}
+```
+
+Can two instances of `MyClass` call `foo` at the same time? It depends. If they have the same instance of `MyObject`, then no. But, if they hold differenct references, then yes.
+
+Static methods synchronize on the `class` lock. Two threads cannoy simultaneously execute synchronized static methods on the same class, even if one is calling `foo` and the other is calling `bar`.
+
+#### Synchronized Blocks
+Similarly, a block of code can be synchronized. This operates very similarly to synchronizing a method.
+
+```java
+public class MyClass extends Thread {
+    ...
+    public void run() {
+        myObj.foo(name);
+    }
+}
+
+public class MyObject {
+    public void foo(String name) {
+        synchronized(this) {
+            ...
+        }
+    }
+}
+```
+
+Like synchronizing a method, only one thread per instance of `MyObject` can execute the code within the `synchronized` block. That means that, if `thread1` and `thread2` have the same instance of `MyObject`, only one will be allowed to execute the code block at a time.
+
+#### Locks
+A lock (or monitor) is used to synchronize access to a shared resource by associating the resource with the lock. A thread gets access to a shared resource by first acquiring the lock associated with the resource. At any given time, at most one thread can hold the lock and, therefore, only one thread can access the shared resource.
+
+A common use case for locks is when a resource is accessed from multiple places, but should only be accessed by one thread *at a time*.
+
+```java
+public class LockedATM {
+    private Lock lock;
+    private int balance = 100;
+
+    public LockedATM() {
+        lock = new ReentrantLock();
+    }
+
+    public int withdraw(int value) {
+        lock.lock();
+        int temp = balance;
+        try {
+            Thread.sleep(100);
+            temp = temp - value;
+            Thread.sleep(100);
+            balance = temp;
+        } catch(InterruptedException e) { }
+        lock.unlock();
+        return temp;
+    }
+
+    public int deposit(int value) {
+        lock.lock();
+        int temp = balance;
+        try {
+            Thread.sleep(100);
+            temp = temp + value;
+            Thread.sleep(300);
+            balance = temp;
+        } catch(InterruptedException e) { }
+        lock.unlock();
+        return temp;
+    }
+}
+```
+
+### Deadlocks and Deadlock Prevention
+A deadlock is a situation where a thread is waiting for an object lock that another thread holds, and this second thread is waiting for an object lock that the first thread holds (or equivalent situation).
+
+In order for a deadlock to occur, you must have all four of the following conditions met:
+
+1. *Mutual Exclusion:* Only one process can access a resource at a given time. (Or, more accurately, there is limited access to a resource. A deadlock could also occur if a resource has limited quantity.)
+2. *Hold and Wait:* Processes already holding a resource can request additional resources, without relinquishing their current resources.
+3. *No preemption:* One process cannot forcibly remove another process' resource.
+4. *Circular Wait:* Two or more processes form a circular chain where each process is waiting on another resource in the chain.
+
+Deadlock prevention entails removing any of the above conditions, but this can be tricky. Most deadlock prevention algorithms focus on avoiding condition #4: circular wait.
